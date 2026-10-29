@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SkyCast | Weather Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'weather/style.css' %}">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="page-shell">
+    <nav class="topbar">
+      <a class="brand" href="{% url 'home' %}">skycast<span class="brand-dot">.</span></a>
+      <span class="live-label"><span class="live-dot"></span> LIVE WEATHER</span>
+    </nav>
+
+    <section class="hero">
+      <p class="eyebrow">YOUR WEATHER, BEAUTIFULLY CLEAR</p>
+      <h1>Find your <span>sky.</span></h1>
+      <p class="hero-copy">A little clarity for whatever the day brings.</p>
+      <form method="POST" class="search-form" id="weather-form">
+        {% csrf_token %}
+        
+        {{ form.name }}
+        <button type="submit" id="search-button">Explore city</button>
+      </form>
+      {% if form.name.errors %}<p class="field-error">{{ form.name.errors.0 }}</p>{% endif %}
+      <p class="search-hint">Search any city around the world</p>
+    </section>
+
+    {% if messages %}
+      <div class="messages">{% for message in messages %}
+        <div class="notice {% if message.tags == 'success' %}notice-success{% elif message.tags == 'warning' %}notice-warning{% else %}notice-error{% endif %}">{{ message }}</div>
+      {% endfor %}</div>
+    {% endif %}
+
+    <section class="results-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">YOUR PLACES</p><h2>Weather overview</h2></div>
+        <span class="place-count">{% if weather_data %}{{ weather_data|length }} saved {% if weather_data|length == 1 %}place{% else %}places{% endif %}{% else %}READY TO EXPLORE{% endif %}</span>
+      </div>
+      {% if weather_data %}
+      <div class="weather-grid">
+        {% for weather in weather_data %}
+        <article class="weather-card">
+          <div class="card-top"><span class="weather-location">{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</span></div>
+          <div class="weather-main">
+            <div><div class="temperature">{{ weather.temperature }}<span>°</span></div><p class="condition">{{ weather.description }}</p><p class="feels">Feels like {{ weather.feels_like }}°C</p></div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="weather-stats">
+            <div class="stat-item"><div><span class="stat-label">Humidity</span><strong>{{ weather.humidity }}%</strong></div></div>
+            <div class="stat-item"><div><span class="stat-label">Wind</span><strong>{{ weather.wind_speed }} <small>km/h</small></strong></div></div>
+            <div class="stat-item"><div><span class="stat-label">Pressure</span><strong>{{ weather.pressure }} <small>hPa</small></strong></div></div>
+          </div>
+          <div class="card-actions">
+            <a class="forecast-link" href="{% url 'forecast' weather.city %}">View 5-day forecast <span>→</span></a>
+            <a class="delete-link" href="{% url 'delete_city' weather.id %}" aria-label="Delete {{ weather.city }}" title="Remove city">×</a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state"><h3>Your forecast starts here</h3><p>Add your first city above to see its current conditions, humidity, wind and 5-day forecast.</p></div>
+      {% endif %}
+    </section>
+    <footer><span>SKYCAST</span><span>Look up. Stay prepared.</span></footer>
+  </main>
+  <script>
+    const form = document.getElementById("weather-form");
+    const button = document.getElementById("search-button");
+    form.addEventListener("submit", () => {
+      button.disabled = true;
+      button.textContent = "Checking sky...";
+    });
+  </script>
+</body>
+</html>

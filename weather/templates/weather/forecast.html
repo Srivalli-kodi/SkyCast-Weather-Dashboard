@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ weather.city }} Forecast | SkyCast</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    >
+
+    <style>
+      body{min-height:100vh;background:radial-gradient(circle at 15% 0%,#243c70 0,transparent 35%),#080f20;padding:30px 15px;font-family:"DM Sans","Segoe UI",sans-serif;color:#edf3ff}
+      .container-card{border-radius:24px;overflow:hidden;background:rgba(19,31,59,.95);border:1px solid rgba(193,213,255,.16);box-shadow:0 25px 70px rgba(0,0,0,.25);color:#edf3ff}
+      .forecast-card{border-radius:17px;height:100%;transition:.25s;background:linear-gradient(145deg,#1c2b4b,#101b33);border:1px solid rgba(193,213,255,.13);color:#edf3ff}
+      .forecast-card:hover{transform:translateY(-5px);border-color:rgba(131,230,228,.45)}
+      .big-temperature{font-size:3.4rem;font-weight:800;color:#f7f9ff}
+      .title,.subtitle{color:#edf3ff!important}.button.is-light{background:#263858;color:#edf3ff;border:1px solid rgba(193,213,255,.16)}
+      .tag{border-radius:9px}.card-content{padding:1.5rem}
+      @media(max-width:600px){body{padding:14px 8px}.big-temperature{font-size:2.7rem}}
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <div class="card container-card">
+
+        <div class="card-content">
+
+
+            <!-- BACK -->
+
+            <a
+                href="{% url 'home' %}"
+                class="button is-light mb-5"
+            >
+                ← Back to Dashboard
+            </a>
+
+
+            <!-- CURRENT WEATHER -->
+
+            <div class="has-text-centered mb-6">
+
+                <h1 class="title is-2">
+
+                    {{ weather.city }}, {{ weather.country }}
+
+                </h1>
+
+
+
+
+                <p class="big-temperature">
+
+                    {{ weather.temperature }}°C
+
+                </p>
+
+
+                <p class="subtitle">
+
+                    {{ weather.description }}
+
+                </p>
+
+
+                <div class="tags is-centered">
+
+                    <span class="tag is-info">
+                        Feels like {{ weather.feels_like }}°C
+                    </span>
+
+                    <span class="tag is-primary">
+                        Humidity {{ weather.humidity }}%
+                    </span>
+
+                    <span class="tag is-warning">
+                        Wind {{ weather.wind_speed }} km/h
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- FORECAST -->
+
+            <h2 class="title is-3 has-text-centered">
+
+                5-Day Forecast
+
+            </h2>
+
+
+            <div class="columns is-multiline">
+
+                {% for item in forecast %}
+
+                    <div
+                        class="column
+                        is-6-mobile
+                        is-4-tablet
+                        is-3-desktop"
+                    >
+
+                        <div class="card forecast-card">
+
+                            <div class="card-content has-text-centered">
+
+                                <p class="has-text-weight-bold">
+
+                                    {{ item.datetime }}
+
+                                </p>
+
+
+
+
+                                <p class="title is-4">
+
+                                    {{ item.temperature }}°C
+
+                                </p>
+
+
+                                <p>
+
+                                    {{ item.description }}
+
+                                </p>
+
+
+                                <p class="is-size-7 mt-2">
+
+                                    Humidity:
+                                    {{ item.humidity }}%
+
+                                </p>
+
+
+                                <p class="is-size-7">
+
+                                    Feels:
+                                    {{ item.feels_like }}°C
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>
